@@ -11,17 +11,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import (
-    # QApplication,
-    # QWidget,
-    # QVBoxLayout,
-    # QLabel,
-    # QLineEdit,
-    # QPushButton,
-    # QMessageBox,
-    # QHBoxLayout,
     QCheckBox,
-    # QSystemTrayIcon,
-    # QMenu,
 )
 # from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import QTimer#, Qt
@@ -136,111 +126,7 @@ class WebsiteMonitor(QWidget):
                 input_domain = urlparse(url).netloc
                 resp_domain = urlparse(resp.url).netloc
 
-                if resp.status_code != 200:
-                    if resp.status_code == 400:
-                        fault_type = "错误请求(400)"
-                        hint = "请求参数格式错误，请检查请求内容"
-                    elif resp.status_code == 401:
-                        fault_type = "未授权访问(401)"
-                        hint = "需要身份验证，请检查登录状态或访问令牌"
-                    elif resp.status_code == 403:
-                        fault_type = "访问被拒绝(403)"
-                        hint = "服务器拒绝访问，请检查权限或IP是否被阻止"
-                    elif resp.status_code == 404:
-                        fault_type = "页面不存在(404)"
-                        hint = "请检查URL是否正确或页面是否已删除"
-                    elif resp.status_code == 405:
-                        fault_type = "方法不允许(405)"
-                        hint = "请求使用的HTTP方法不被服务器允许"
-                    elif resp.status_code == 406:
-                        fault_type = "不接受的媒体类型(406)"
-                        hint = "服务器无法提供请求头中指定的格式"
-                    elif resp.status_code == 409:
-                        fault_type = "请求冲突(409)"
-                        hint = "请求与资源当前状态冲突"
-                    elif resp.status_code == 408:
-                        fault_type = "请求超时(408)"
-                        hint = "服务器等待请求超时，请检查网络连接"
-                    elif resp.status_code == 410:
-                        fault_type = "资源永久删除(410)"
-                        hint = "请求的资源已被永久删除，无法恢复"
-                    elif resp.status_code == 422:
-                        fault_type = "参数验证失败(422)"
-                        hint = "请求参数格式正确但内容验证失败"
-                    elif resp.status_code == 413:
-                        fault_type = "请求实体过大(413)"
-                        hint = "请求体大小超过服务器限制"
-                    elif resp.status_code == 414:
-                        fault_type = "URI过长(414)"
-                        hint = "请求的URL长度超过服务器允许的限制"
-                    elif resp.status_code == 415:
-                        fault_type = "不支持的媒体类型(415)"
-                        hint = "请求的媒体类型不被服务器支持"
-                    elif resp.status_code == 421:
-                        fault_type = "请求目标错误(421)"
-                        hint = "请求被发送到无法处理的服务器"
-                    elif resp.status_code == 431:
-                        fault_type = "请求头过大(431)"
-                        hint = "请求头字段大小超过服务器限制"
-                    elif resp.status_code == 429:
-                        fault_type = "请求过于频繁(429)"
-                        hint = "已超出请求限制，请稍后再试"
-                    elif resp.status_code == 500:
-                        fault_type = "服务器内部错误(500)"
-                        hint = "服务器遇到意外错误，请联系管理员"
-                    elif resp.status_code == 501:
-                        fault_type = "未实现功能(501)"
-                        hint = "服务器不支持请求的功能或方法"
-                    elif resp.status_code == 502:
-                        fault_type = "网关错误(502)"
-                        hint = "服务器作为网关收到无效响应"
-                    elif resp.status_code == 503:
-                        fault_type = "服务不可用(503)"
-                        hint = "服务器暂时无法处理请求，请稍后再试"
-                    elif resp.status_code == 504:
-                        fault_type = "网关超时(504)"
-                        hint = "服务器作为网关未能及时收到响应"
-                    elif resp.status_code == 505:
-                        fault_type = "HTTP版本不受支持(505)"
-                        hint = "服务器不支持请求使用的HTTP版本"
-                    elif resp.status_code == 506:
-                        fault_type = "变体协商失败(506)"
-                        hint = "服务器内部配置错误导致协商失败"
-                    elif resp.status_code == 511:
-                        fault_type = "需要网络认证(511)"
-                        hint = "需要进行网络认证才能访问"
-                    elif 400 <= resp.status_code < 500:
-                        fault_type = f"客户端错误({resp.status_code})"
-                        hint = "请求存在错误，请检查请求参数"
-                        msg = (
-                            f"报警：网站故障\n地址：{url}\n状态码：{resp.status_code}\n"
-                            f"故障类型：{fault_type}\n提示：{hint}"
-                        )
-                        self.send_dingding(token, msg, title="网站报警")
-                        self.update_status(f"[异常] 状态码：{resp.status_code}，故障类型：{fault_type}")
-                        self.sleep_with_interrupt(interval_err)
-                elif 500 <= resp.status_code < 600:
-                    fault_type = f"服务器错误({resp.status_code})"
-                    hint = "服务器处理请求时发生错误，请联系管理员"
-                    msg = (
-                        f"报警：网站故障\n地址：{url}\n状态码：{resp.status_code}\n"
-                        f"故障类型：{fault_type}\n提示：{hint}"
-                    )
-                    self.send_dingding(token, msg, title="网站报警")
-                    self.update_status(f"[异常] 状态码：{resp.status_code}，故障类型：{fault_type}")
-                    self.sleep_with_interrupt(interval_err)
-
-                if input_domain != resp_domain:
-                    status_code = resp.status_code
-                    fault_type = f"跳转异常（跳转至{resp_domain}）"
-                    msg = (
-                        f"报警：网站跳转异常\n地址：{url}\n状态码：{status_code}\n跳转地址：{resp.url}\n"
-                        f"故障类型：{fault_type}\n提示：请检查网站配置或续费状态。"
-                    )
-                    self.send_dingding(token, msg, title="网站报警")
-                    self.update_status(f"[异常] 状态码：{status_code}，故障类型：{fault_type}")
-                    self.sleep_with_interrupt(interval_err)
-                else:
+                if resp.status_code == 200 and input_domain == urlparse(resp.url).netloc:
                     fault_type = "正常"
                     msg = (
                         f"提示：网站正常运行中\n地址：{url}\n状态码：{resp.status_code}\n"
@@ -249,6 +135,88 @@ class WebsiteMonitor(QWidget):
                     self.send_dingding(token, msg, title="系统提醒")
                     self.update_status(f"[正常] 状态码：{resp.status_code}，系统状态：{fault_type}")
                     self.sleep_with_interrupt(interval_ok)
+                else:
+                    if resp.status_code != 200:
+                        if 400 <= resp.status_code < 500:
+                            fault_type = f"客户端错误({resp.status_code})"
+                            if resp.status_code == 400:
+                                hint = "请求参数格式错误，请检查请求内容"
+                            elif resp.status_code == 401:
+                                hint = "需要身份验证，请检查登录状态或访问令牌"
+                            elif resp.status_code == 403:
+                                hint = "服务器拒绝访问，请检查权限或IP是否被阻止"
+                            elif resp.status_code == 404:
+                                hint = "请检查URL是否正确或页面是否已删除"
+                            elif resp.status_code == 405:
+                                hint = "请求使用的HTTP方法不被服务器允许"
+                            elif resp.status_code == 406:
+                                hint = "服务器无法提供请求头中指定的格式"
+                            elif resp.status_code == 409:
+                                hint = "请求与资源当前状态冲突"
+                            elif resp.status_code == 408:
+                                hint = "服务器等待请求超时，请检查网络连接"
+                            elif resp.status_code == 410:
+                                hint = "请求的资源已被永久删除，无法恢复"
+                            elif resp.status_code == 422:
+                                hint = "请求参数格式正确但内容验证失败"
+                            elif resp.status_code == 413:
+                                hint = "请求体大小超过服务器限制"
+                            elif resp.status_code == 414:
+                                hint = "请求的URL长度超过服务器允许的限制"
+                            elif resp.status_code == 415:
+                                hint = "请求的媒体类型不被服务器支持"
+                            elif resp.status_code == 421:
+                                hint = "请求被发送到无法处理的服务器"
+                            elif resp.status_code == 431:
+                                hint = "请求头字段大小超过服务器限制"
+                            elif resp.status_code == 429:
+                                hint = "已超出请求限制，请稍后再试"
+                            else:
+                                hint = "请求存在错误，请检查请求参数"
+                        elif 500 <= resp.status_code < 600:
+                            fault_type = f"服务器错误({resp.status_code})"
+                            if resp.status_code == 500:
+                                hint = "服务器遇到意外错误，请联系管理员"
+                            elif resp.status_code == 501:
+                                hint = "服务器不支持请求的功能或方法"
+                            elif resp.status_code == 502:
+                                hint = "服务器作为网关收到无效响应"
+                            elif resp.status_code == 503:
+                                hint = "服务器暂时无法处理请求，请稍后再试"
+                            elif resp.status_code == 504:
+                                hint = "服务器作为网关未能及时收到响应"
+                            elif resp.status_code == 505:
+                                hint = "服务器不支持请求使用的HTTP版本"
+                            elif resp.status_code == 506:
+                                hint = "服务器内部配置错误导致协商失败"
+                            elif resp.status_code == 511:
+                                hint = "需要进行网络认证才能访问"
+                            else:
+                                hint = "服务器处理请求时发生错误，请联系管理员"
+                        else:
+                            fault_type = f"未知状态码({resp.status_code})"
+                            hint = "遇到未知状态码，请检查服务器配置"
+                    else:
+                        fault_type = f"跳转异常（跳转至{urlparse(resp.url).netloc}）"
+                        hint = "请检查网站配置或续费状态。"
+                    msg = (
+                        f"报警：网站故障\n地址：{url}\n状态码：{resp.status_code}\n"
+                        f"故障类型：{fault_type}\n提示：{hint}"
+                    )
+                    self.send_dingding(token, msg, title="网站报警")
+                    self.update_status(f"[异常] 状态码：{resp.status_code}，故障类型：{fault_type}")
+                    self.sleep_with_interrupt(interval_err)
+
+                    if input_domain != resp_domain:
+                        status_code = resp.status_code
+                        fault_type = f"跳转异常（跳转至{resp_domain}）"
+                        msg = (
+                            f"报警：网站跳转异常\n地址：{url}\n状态码：{status_code}\n跳转地址：{resp.url}\n"
+                            f"故障类型：{fault_type}\n提示：请检查网站配置或续费状态。"
+                        )
+                        self.send_dingding(token, msg, title="网站报警")
+                        self.update_status(f"[异常] 状态码：{status_code}，故障类型：{fault_type}")
+                        self.sleep_with_interrupt(interval_err)
 
             except requests.exceptions.Timeout:
                 status_code = "未知"
