@@ -1,0 +1,28 @@
+2025-06-24 00:40:18,021 - INFO - 正常：https://www.wic-power.com 状态码：200
+2025-06-24 00:40:23,244 - INFO - 正常：https://www.wic-power.com 状态码：200
+2025-06-24 00:40:32,827 - INFO - 正常：https://www.wic-power.com 状态码：200
+2025-06-24 00:40:42,413 - INFO - 正常：https://www.wic-power.com 状态码：200
+2025-06-24 00:41:00,823 - INFO - 正常：https://www.wic-power.com 状态码：200
+2025-06-24 00:41:05,263 - INFO - 正常：https://www.wic-power.com 状态码：200
+2025-06-24 00:41:31,713 - ERROR - 连接错误：https://www.wic-power.co HTTPSConnectionPool(host='www.wic-power.co', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001EA9AA078B0>: Failed to resolve 'www.wic-power.co' ([Errno 11001] getaddrinfo failed)"))
+2025-06-24 00:42:15,399 - ERROR - 异常：http://www.wic-power.cloud 状态码：504
+2025-06-24 00:42:35,976 - ERROR - 异常：http://www.wic-power.cloud 状态码：504
+2025-06-24 00:42:56,542 - ERROR - 异常：http://www.wic-power.cloud 状态码：504
+2025-06-24 00:43:17,099 - ERROR - 异常：http://www.wic-power.cloud 状态码：504
+2025-06-24 00:43:37,716 - ERROR - 异常：http://www.wic-power.cloud 状态码：504
+2025-06-24 00:43:58,314 - ERROR - 异常：http://www.wic-power.cloud 状态码：504
+2025-06-24 00:52:56,709 - INFO - 正常：https://www.wic-power.com 状态码：200
+2025-06-24 00:53:04,039 - INFO - 正常：https://www.wic-power.com 状态码：200
+2025-06-24 00:53:14,909 - ERROR - 连接错误：https://www.wic-power.co HTTPSConnectionPool(host='www.wic-power.co', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001C286AE63B0>: Failed to resolve 'www.wic-power.co' ([Errno 11001] getaddrinfo failed)"))
+2025-06-24 00:59:04,625 - INFO - 正常：https://www.wic-power.com 状态码：200
+2025-06-24 00:59:16,020 - INFO - 正常：https://www.wic-power.com 状态码：200
+2025-06-24 00:59:19,948 - ERROR - 连接错误：https://www.wic-power.co HTTPSConnectionPool(host='www.wic-power.co', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001AF46B56AD0>: Failed to resolve 'www.wic-power.co' ([Errno 11001] getaddrinfo failed)"))
+2025-06-24 00:59:27,459 - INFO - 正常：https://www.wic-power.com 状态码：200
+2025-06-24 01:00:01,705 - ERROR - 连接错误：https://www.wic-power.co HTTPSConnectionPool(host='www.wic-power.co', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001AF46B574F0>: Failed to resolve 'www.wic-power.co' ([Errno 11001] getaddrinfo failed)"))
+2025-06-24 01:00:22,114 - ERROR - 连接错误：https://www.wic-power.co HTTPSConnectionPool(host='www.wic-power.co', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001AF46BA8250>: Failed to resolve 'www.wic-power.co' ([Errno 11001] getaddrinfo failed)"))
+2025-06-24 01:01:35,634 - ERROR - 异常：http://www.wic-power.cloud 状态码：504
+2025-06-24 01:02:33,772 - INFO - 跳转：https://httpbin.org/redirect-to?url=https://example.com -> https://example.com 状态码：200
+2025-06-24 01:02:57,431 - INFO - 跳转：https://httpbin.org/redirect-to?url=https://example.com -> https://example.com 状态码：200
+2025-06-24 01:03:21,007 - INFO - 跳转：https://httpbin.org/redirect-to?url=https://example.com -> https://example.com 状态码：200
+2025-06-24 01:03:36,822 - INFO - 跳转：https://httpbin.org/redirect-to?url=https://example.com -> https://example.com 状态码：200
+2025-06-24 01:03:38,327 - INFO - 跳转：https://httpbin.org/redirect-to?url=https://www.aliyun.com -> https://www.aliyun.com 状态码：200

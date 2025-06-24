@@ -1,0 +1,146 @@
+import sys
+import time
+import threading
+import requests
+import json
+
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout, QLabel,
+    QLineEdit, QPushButton, QMessageBox, QHBoxLayout
+)
+from PyQt6.QtCore import QTimer
+
+
+class WebsiteMonitor(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("网站可用性监控 - 钉钉推送")
+        self.setFixedSize(580, 300)
+        self.monitoring = False
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QVBoxLayout()
+
+        # 网站URL输入
+        h_layout_url = QHBoxLayout()
+        h_layout_url.addWidget(QLabel("监控网站 URL："))
+        self.url_input = QLineEdit("https://www.wic-power.com")
+        h_layout_url.addWidget(self.url_input)
+        layout.addLayout(h_layout_url)
+
+        # 异常检测间隔
+        h_layout_interval_err = QHBoxLayout()
+        h_layout_interval_err.addWidget(QLabel("异常检测间隔（秒）："))
+        self.interval_input_err = QLineEdit("180")
+        h_layout_interval_err.addWidget(self.interval_input_err)
+        layout.addLayout(h_layout_interval_err)
+
+        # 正常检测间隔
+        h_layout_interval_ok = QHBoxLayout()
+        h_layout_interval_ok.addWidget(QLabel("正常检测间隔（秒）："))
+        self.interval_input_ok = QLineEdit("600")
+        h_layout_interval_ok.addWidget(self.interval_input_ok)
+        layout.addLayout(h_layout_interval_ok)
+
+        # 钉钉access_token输入
+        h_layout_token = QHBoxLayout()
+        h_layout_token.addWidget(QLabel("钉钉 access_token："))
+        self.token_input = QLineEdit("aa0366d18f2307daa196c4f96546ed629a92b110448ed104614fe9566dfa1b14")
+        h_layout_token.addWidget(self.token_input)
+        layout.addLayout(h_layout_token)
+
+        # 状态显示标签
+        self.status_label = QLabel("状态：未开始监控")
+        layout.addWidget(self.status_label)
+
+        # 控制按钮
+        self.start_btn = QPushButton("开始监控")
+        self.start_btn.clicked.connect(self.toggle_monitoring)
+        layout.addWidget(self.start_btn)
+
+        self.setLayout(layout)
+
+    def toggle_monitoring(self):
+        if self.monitoring:
+            self.monitoring = False
+            self.start_btn.setText("开始监控")
+            self.update_status("已停止监控")
+        else:
+            url = self.url_input.text().strip()
+            token = self.token_input.text().strip()
+            interval_err = self.interval_input_err.text().strip()
+            interval_ok = self.interval_input_ok.text().strip()
+
+            if not url or not token:
+                QMessageBox.warning(self, "输入错误", "请填写完整的URL和token")
+                return
+
+            try:
+                interval_err = int(interval_err)
+                interval_ok = int(interval_ok)
+                if interval_err < 10 or interval_ok < 10:
+                    QMessageBox.warning(self, "输入错误", "检测间隔不能小于10秒")
+                    return
+            except ValueError:
+                QMessageBox.warning(self, "输入错误", "请输入有效的时间间隔（整数）")
+                return
+
+            self.monitoring = True
+            self.start_btn.setText("停止监控")
+            self.update_status(f"开始监控：{url}")
+
+            thread = threading.Thread(
+                target=self.monitor_loop,
+                args=(url, interval_err, interval_ok, token),
+                daemon=True
+            )
+            thread.start()
+
+    def monitor_loop(self, url, interval_err, interval_ok, token):
+        last_status = None
+        while self.monitoring:
+            try:
+                resp = requests.get(url, timeout=10)
+                status_code = resp.status_code
+                if status_code != 200:
+                    msg = f"报警：网站故障\n地址：{url}\n状态码：{status_code}\n提示：请尽快处理。"
+                    self.send_dingding(token, msg)
+                    self.update_status(f"[异常] 状态码：{status_code}")
+                    time.sleep(interval_err)
+                else:
+                    if last_status != 'ok':
+                        msg = f"提示：网站恢复正常\n地址：{url}\n状态码：{status_code}"
+                        self.send_dingding(token, msg)
+                    self.update_status(f"[正常] 状态码：{status_code}")
+                    time.sleep(interval_ok)
+                last_status = 'ok' if status_code == 200 else 'error'
+            except Exception as e:
+                msg = f"报警：网站请求失败\n地址：{url}\n提示：异常信息：{str(e)}"
+                self.send_dingding(token, msg)
+                self.update_status(f"[异常] 请求失败：{e}")
+                last_status = 'error'
+                time.sleep(interval_err)
+
+    def send_dingding(self, token, message):
+        webhook = f"https://oapi.dingtalk.com/robot/send?access_token={token}"
+        headers = {"Content-Type": "application/json"}
+        data = {
+            "msgtype": "text",
+            "text": {"content": message}
+        }
+        try:
+            response = requests.post(webhook, headers=headers, data=json.dumps(data))
+            print(f"[推送结果] {response.status_code} - {response.text}")
+        except Exception as e:
+            print(f"[推送失败] {e}")
+
+    def update_status(self, text):
+        QTimer.singleShot(0, lambda: self.status_label.setText(f"状态：{text}"))
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = WebsiteMonitor()
+    window.show()
+    sys.exit(app.exec())
