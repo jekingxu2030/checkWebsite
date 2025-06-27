@@ -225,13 +225,13 @@ class Monitor:
         location = self.get_ip_location()
 
         location_str = f"{location.get('country')} {location.get('region')} {location.get('city')}" if not location.get('error') else f"获取地理位置失败: {location.get('error')}"
-        print("用户地区：{location_str}")
+        print("测试地区：{location_str}")
         lines = [
             f"提示：网站正常运行中",
             f"地址：{self.url}",
             f"状态码：{code}",
             f"系统状态：正常",
-            f"用户地区:{location_str}",
+            f"测试地区:{location_str}",
         ]
         if cert_info and cert_info.get("status") == "valid":
             lines.append(f"证书有效期至：{cert_info.get('not_after')}")
@@ -286,7 +286,7 @@ class Monitor:
             if exception_info:
                 content_lines.append(f"异常信息：{exception_info}")
             if  location_content:
-                content_lines.append(f"用户地区：{location_content}")    
+                content_lines.append(f"测试地区：{location_content}")    
 
         content = "\n".join(content_lines)
 

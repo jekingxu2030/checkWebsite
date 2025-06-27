@@ -14,13 +14,13 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QTimer
 
-from monitor15 import Monitor  # 确保你使用的是最新 monitor 文件
+from monitor16 import Monitor  # 确保你使用的是最新 monitor 文件
 
 
 class WebsiteMonitor(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("网站可用性监控 - 钉钉推送0.16")
+        self.setWindowTitle("网站可用性监控 - 钉钉推送0.16.2")
         self.setFixedSize(580, 260)  # 高度加了些用于显示新标签
         self.monitoring = False
         self.stop_event = threading.Event()
