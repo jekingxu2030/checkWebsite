@@ -221,23 +221,32 @@ class Monitor:
         return fault, hint
 
     def report_ok(self, code, cert_info=None, cert_warn=None):
+        # 获取IP地理位置信息
+        location = self.get_ip_location()
+
+        location_str = f"{location.get('country')} {location.get('region')} {location.get('city')}" if not location.get('error') else f"获取地理位置失败: {location.get('error')}"
+        print("用户地区：{location_str}")
         lines = [
             f"提示：网站正常运行中",
             f"地址：{self.url}",
             f"状态码：{code}",
             f"系统状态：正常",
+            f"用户地区:{location_str}",
         ]
         if cert_info and cert_info.get("status") == "valid":
             lines.append(f"证书有效期至：{cert_info.get('not_after')}")
         elif cert_warn:
             lines.append(f"证书异常提示：{cert_warn}")
 
+        # 将地区信息添加到推送内容中
+        location_content = location_str
         self.send_dingding(
             title="系统提醒",
             address=self.url,
             system_status="正常",
             system_hint="网站响应正常",
             status_code=code,
+            location_content=location_content,
             warm_tip=(
                 lines[-1]
                 if cert_warn or (cert_info and cert_info.get("status") == "valid")
@@ -256,6 +265,7 @@ class Monitor:
         status_code=None,
         exception_info=None,
         warm_tip=None,
+        location_content=None,
     ):
         content_lines = []
         if message:
@@ -275,6 +285,8 @@ class Monitor:
                 content_lines.append(f"温馨提示：{warm_tip}")
             if exception_info:
                 content_lines.append(f"异常信息：{exception_info}")
+            if  location_content:
+                content_lines.append(f"用户地区：{location_content}")    
 
         content = "\n".join(content_lines)
 
@@ -306,6 +318,19 @@ class Monitor:
         msg = f"报警：{fault_type}\n地址：{self.url}\n异常信息：{error_msg}"
         self.send_dingding(message=msg)
         self.callback_status(f"[异常] {fault_type}：{error_msg}")
+
+    def get_ip_location(self):
+        try:
+            response = requests.get('https://ipinfo.io/json')
+            data = response.json()
+            return {
+                'ip': data.get('ip'),
+                'country': data.get('country'),
+                'region': data.get('region'),
+                'city': data.get('city')
+            }
+        except Exception as e:
+            return {'error': f'获取IP地理位置失败: {str(e)}'}
 
     def sleep_with_interrupt(self, seconds):
         for _ in range(seconds):
